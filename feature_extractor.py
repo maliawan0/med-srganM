@@ -1,14 +1,14 @@
+import torch
 import torch.nn as nn
 import torchvision.models as models
+from torchvision.models import vgg19, VGG19_Weights
 
 class FeatureExtractor(nn.Module):
     def __init__(self):
-        super().__init__()
-        vgg = models.vgg19(pretrained=True).features
-        self.feature_layers = nn.Sequential(*list(vgg.children())[:18])  # Fix: Close Sequential first
-        self.feature_layers.eval()  # Then call eval()
-        for param in self.feature_layers.parameters():
-            param.requires_grad = False  # Freeze parameters
+        super(FeatureExtractor, self).__init__()
+        # ✅ FIX: Use weights instead of 'pretrained=True'
+        vgg = vgg19(weights=VGG19_Weights.IMAGENET1K_V1).features[:36]  
+        self.model = nn.Sequential(*vgg)
 
     def forward(self, x):
-        return self.feature_layers(x)
+        return self.model(x)

@@ -39,7 +39,9 @@ optimizer_G = optim.Adam(gen.parameters(), lr=1e-3, weight_decay=1e-5)
 optimizer_D = optim.Adam(disc.parameters(), lr=1e-4, weight_decay=1e-5)
 loss_function = torch.nn.L1Loss().to(device)
 gan_loss = torch.nn.BCEWithLogitsLoss().to(device)
-scaler = torch.cuda.amp.GradScaler()
+scaler = torch.amp.GradScaler(device_type='cuda', enabled=True)
+
+
 
 def fit(gen, disc, feature_extractor, train_dl, epochs, optimizer_G, optimizer_D, scaler, loss_function, gan_loss):
     t_loss_G, t_loss_D = [], []
@@ -47,8 +49,8 @@ def fit(gen, disc, feature_extractor, train_dl, epochs, optimizer_G, optimizer_D
         e_loss_G, e_loss_D = [], []
         for data in train_dl:
             lr_img, hr_img = data
-            valid = Variable(Tensor(np.ones((1, 2))), requires_grad=False)
-            fake = Variable(Tensor(np.zeros((1, 2))), requires_grad=False)
+            valid = torch.ones((1, 2), dtype=torch.float32, device=device)
+            fake = torch.zeros((1, 2), dtype=torch.float32, device=device)
 
             # Train Generator
             with torch.cuda.amp.autocast():
