@@ -94,5 +94,9 @@ def fit(gen, disc, feature_extractor, train_dl, epochs, optimizer_G, optimizer_D
 
     return t_loss_G, t_loss_D
 
+
+print("pls woek")
+
+
 # Start training
 fit(gen, disc, feature_extractor, train_dl, 100, optimizer_G, optimizer_D, scaler, loss_function, gan_loss)
